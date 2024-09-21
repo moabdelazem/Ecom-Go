@@ -4,7 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
+
+// Validator is a new instance of the validator
+var Validator = validator.New()
 
 /*
 The ParseJSON function is a utility function that decodes the request body into the payload.

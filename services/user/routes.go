@@ -1,8 +1,10 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 	"github.com/moabdelazem/ecom/services/auth"
 	"github.com/moabdelazem/ecom/types"
@@ -41,6 +43,14 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
+
+	// Validate The Payload
+	if err := utils.Validator.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
+		return
+	}
+
 	// Check If The User Already Exists
 	if _, err := h.store.GetUserByEmail(payload.Email); err != nil {
 		utils.ErrorHandler(w, http.StatusInternalServerError, err)
